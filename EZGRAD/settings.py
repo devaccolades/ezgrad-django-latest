@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from datetime import timedelta
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-ow+%*xrhbsl1wkqy^8*)c(@ke7(%o@t9!-aqo_8^hpd8t2-lfa
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-PRODUCTION=True
+PRODUCTION=False
 
 ALLOWED_HOSTS = ['*']
 
@@ -108,28 +109,17 @@ WSGI_APPLICATION = 'EZGRAD.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if PRODUCTION:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'ezgrad',
-            'USER':'ezgraduser',
-            'PASSWORD':'123',
-            'HOST':'localhost',
-            'PORT':'5432'
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('NAME'),
+        'USER':config('USER'),
+        'PASSWORD':config('PASSWORD'),
+        'HOST':config('HOST'),
+        'PORT':config('PORT')
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'ezgrad',
-            'USER':'sifan',
-            'PASSWORD':'123',
-            'HOST':'localhost',
-            'PORT':'5432'
-        }
-    }
+}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -166,13 +156,8 @@ CORS_ALLOW_ALL_ORIGINS = True
 EMAIL_HOST="smtp.gmail.com"
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
-if DEBUG :
-    EMAIL_HOST_USER="ajanya.accolades@gmail.com"
-    EMAIL_HOST_PASSWORD="ujyihrqrjunqjjxf"
-    
-else:
-    EMAIL_HOST_USER="ajanya.accolades@gmail.com"
-    EMAIL_HOST_PASSWORD="ujyihrqrjunqjjxf"
+EMAIL_HOST_USER=config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD=config("EMAIL_HOST_USER")
 
 # CORS_ALLOWED_ORIGINS  = [
 #     "http://127.0.0.1:5500",'https://ez-grad-chief.accoladesweb.com/','http://ez-grad-chief.accoladesweb.com/',

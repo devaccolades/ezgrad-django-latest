@@ -27,7 +27,7 @@ from rest_framework.permissions import AllowAny
 from django.conf import settings
 from django.core.mail import send_mail
 from django.template.loader import get_template
-
+from rest_framework.views import APIView
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
@@ -2159,42 +2159,29 @@ def admin_filter_university(request):
         return Response({'app_data':response_data})   
 
 
-    
-
-
-@api_view(['POST'])
-@group_required(['ezgrad_admin'])
-def add_suggetions(request):
-    serialized_data=SuggestionAddSerializer(data=request.data)
-    if serialized_data.is_valid():
-        serialized_data.save()
-        response_data={
-            "StatusCode":6000,
-            "data":{
-                 "title":"Success",
-                 "Message":"Added Successfully"
+class SuggestedCollageAPIView(APIView):
+    @group_required(['ezgrad_admin'])
+    def post(self, request):
+        serializer = SuggestionAddSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Success",
+                    "Message": serializer.data
+                }
             }
-        }
-    else:
-         response_data={
-              "StatusCode":6001,
-              "data":{
-                   "title":"Failed",
-                   "Message":generate_serializer_errors(serialized_data._errors)
-              }
-         }
-    return Response({'app_data':response_data})
-
-
-
-
-
-
-
-
-
-
-
+            return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": serializer.errors
+                }
+            }
+            return Response(response_data, status=status.HTTP_200_OK)
 
 
 

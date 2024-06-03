@@ -1,7 +1,6 @@
 from django.urls import path
 from api.v1.student import views
 
-
 urlpatterns=[
 
     path('general-search/',views.general_search),
@@ -63,7 +62,7 @@ urlpatterns=[
     path('admin-add-answer/',views.admin_add_answer),
     path('admin-filter-university/',views.admin_filter_university),
     
-    path('add-suggetions/',views.add_suggetions),
+    path('add-suggetions/',views.SuggestedCollageAPIView.as_view()),
 
 
 
