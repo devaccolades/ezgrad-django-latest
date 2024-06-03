@@ -1,0 +1,121 @@
+[0;1;32m●[0m ubuntu-s-4vcpu-8gb-blr1-01
+    State: [0;1;32mrunning[0m
+     Jobs: 0 queued
+   Failed: 0 units
+    Since: Sat 2023-06-24 09:41:49 UTC; 8 months 10 days ago
+   CGroup: /
+           ├─user.slice 
+           │ └─user-0.slice 
+           │   ├─session-48720.scope 
+           │   │ ├─[0;38;5;245m2938368 sshd: root@pts/1[0m
+           │   │ ├─[0;38;5;245m2938474 -bash[0m
+           │   │ ├─[0;38;5;245m2938697 sudo systemctl status[0m
+           │   │ ├─[0;38;5;245m2938698 sudo systemctl status[0m
+           │   │ ├─[0;38;5;245m2938699 systemctl status[0m
+           │   │ └─[0;38;5;245m2938700 pager[0m
+           │   └─[0m[0;4muser@0.service[0m [0;1;39m…[0m
+           │     └─init.scope 
+           │       ├─[0;38;5;245m2938371 /lib/systemd/systemd --user[0m
+           │       └─[0;38;5;245m2938372 (sd-pam)[0m
+           ├─init.scope 
+           │ └─[0;38;5;245m1 /lib/systemd/systemd --system --deserialize 56[0m
+           └─system.slice 
+             ├─irqbalance.service 
+             │ └─[0;38;5;245m47598 /usr/sbin/irqbalance --foreground[0m
+             ├─packagekit.service 
+             │ └─[0;38;5;245m1400337 /usr/libexec/packagekitd[0m
+             ├─systemd-networkd.service 
+             │ └─[0;38;5;245m47636 /lib/systemd/systemd-networkd[0m
+             ├─systemd-udevd.service 
+             │ └─[0;38;5;245m47635 /lib/systemd/systemd-udevd[0m
+             ├─gunicorn1.service 
+             │ ├─[0;38;5;245m2700552 /home/svojas-admin/env/bin/python3 /home/svojas-admin/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8001 svojas.wsgi:application[0m
+             │ ├─[0;38;5;245m2700553 /home/svojas-admin/env/bin/python3 /home/svojas-admin/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8001 svojas.wsgi:application[0m
+             │ ├─[0;38;5;245m2700554 /home/svojas-admin/env/bin/python3 /home/svojas-admin/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8001 svojas.wsgi:application[0m
+             │ └─[0;38;5;245m2700555 /home/svojas-admin/env/bin/python3 /home/svojas-admin/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8001 svojas.wsgi:application[0m
+             ├─gunicorn_english_cafe.service 
+             │ ├─[0;38;5;245m2866202 /home/english-cafe/venv/bin/python3 /home/english-cafe/venv/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8002 english_cafe.wsgi:application[0m
+             │ ├─[0;38;5;245m2866203 /home/english-cafe/venv/bin/python3 /home/english-cafe/venv/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8002 english_cafe.wsgi:application[0m
+             │ ├─[0;38;5;245m2866204 /home/english-cafe/venv/bin/python3 /home/english-cafe/venv/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8002 english_cafe.wsgi:application[0m
+             │ └─[0;38;5;245m2866205 /home/english-cafe/venv/bin/python3 /home/english-cafe/venv/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8002 english_cafe.wsgi:application[0m
+             ├─cron.service 
+             │ └─[0;38;5;245m741 /usr/sbin/cron -f -P[0m
+             ├─system-serial\x2dgetty.slice 
+             │ └─serial-getty@ttyS0.service 
+             │   └─[0;38;5;245m794 /sbin/agetty -o -p -- \u --keep-baud 115200,57600,38400,9600 ttyS0 vt220[0m
+             ├─nginx.service 
+             │ ├─[0;38;5;245m2794297 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;[0m
+             │ ├─[0;38;5;245m2937555 nginx: worker process[0m
+             │ ├─[0;38;5;245m2937556 nginx: worker process[0m
+             │ ├─[0;38;5;245m2937557 nginx: worker process[0m
+             │ └─[0;38;5;245m2937558 nginx: worker process[0m
+             ├─polkit.service 
+             │ └─[0;38;5;245m47608 /usr/libexec/polkitd --no-debug[0m
+             ├─networkd-dispatcher.service 
+             │ └─[0;38;5;245m750 /usr/bin/python3 /usr/bin/networkd-dispatcher --run-startup-triggers[0m
+             ├─multipathd.service 
+             │ └─[0;38;5;245m1400339 /sbin/multipathd -d -s[0m
+             ├─ladder_gunicorn.service 
+             │ ├─[0;38;5;245m961297 /home/ladder/venv/bin/python3 /home/ladder/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ladder_gunicorn.sock ladder.wsgi:application[0m
+             │ ├─[0;38;5;245m961299 /home/ladder/venv/bin/python3 /home/ladder/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ladder_gunicorn.sock ladder.wsgi:application[0m
+             │ ├─[0;38;5;245m961301 /home/ladder/venv/bin/python3 /home/ladder/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ladder_gunicorn.sock ladder.wsgi:application[0m
+             │ └─[0;38;5;245m961302 /home/ladder/venv/bin/python3 /home/ladder/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ladder_gunicorn.sock ladder.wsgi:application[0m
+             ├─systemd-journald.service 
+             │ └─[0;38;5;245m47603 /lib/systemd/systemd-journald[0m
+             ├─unattended-upgrades.service 
+             │ └─[0;38;5;245m818 /usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown --wait-for-signal[0m
+             ├─ssh.service 
+             │ ├─[0;38;5;245m 963764 sshd: /usr/sbin/sshd -D [listener] 1 of 10-100 startups[0m
+             │ ├─[0;38;5;245m2938695 sshd: root [priv][0m
+             │ └─[0;38;5;245m2938696 sshd: root [net][0m
+             ├─gunicorn.service 
+             │ ├─[0;38;5;245m1302590 /home/hectares-backend/skyline-hectors/hectaresenv/bin/python3 /home/hectares-backend/skyline-hectors/hectaresenv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock skyline.wsgi:application[0m
+             │ ├─[0;38;5;245m1302591 /home/hectares-backend/skyline-hectors/hectaresenv/bin/python3 /home/hectares-backend/skyline-hectors/hectaresenv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock skyline.wsgi:application[0m
+             │ ├─[0;38;5;245m1302592 /home/hectares-backend/skyline-hectors/hectaresenv/bin/python3 /home/hectares-backend/skyline-hectors/hectaresenv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock skyline.wsgi:application[0m
+             │ └─[0;38;5;245m1302593 /home/hectares-backend/skyline-hectors/hectaresenv/bin/python3 /home/hectares-backend/skyline-hectors/hectaresenv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock skyline.wsgi:application[0m
+             ├─medcity_gunicorn.service 
+             │ ├─[0;38;5;245m2789048 /home/medcity/venv/bin/python3 /home/medcity/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/medcity_gunicorn.sock medcity.wsgi:application[0m
+             │ ├─[0;38;5;245m2789049 /home/medcity/venv/bin/python3 /home/medcity/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/medcity_gunicorn.sock medcity.wsgi:application[0m
+             │ ├─[0;38;5;245m2789050 /home/medcity/venv/bin/python3 /home/medcity/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/medcity_gunicorn.sock medcity.wsgi:application[0m
+             │ └─[0;38;5;245m2789051 /home/medcity/venv/bin/python3 /home/medcity/venv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/medcity_gunicorn.sock medcity.wsgi:application[0m
+             ├─snapd.service 
+             │ └─[0;38;5;245m957562 /usr/lib/snapd/snapd[0m
+             ├─homes_gunicorn.service 
+             │ ├─[0;38;5;245m1865856 /home/classic-homes/homes-env/bin/python3 /home/classic-homes/homes-env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/homes_gunicorn.sock classic_homes.wsgi:application[0m
+             │ ├─[0;38;5;245m1865858 /home/classic-homes/homes-env/bin/python3 /home/classic-homes/homes-env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/homes_gunicorn.sock classic_homes.wsgi:application[0m
+             │ ├─[0;38;5;245m1865859 /home/classic-homes/homes-env/bin/python3 /home/classic-homes/homes-env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/homes_gunicorn.sock classic_homes.wsgi:application[0m
+             │ └─[0;38;5;245m1865860 /home/classic-homes/homes-env/bin/python3 /home/classic-homes/homes-env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/homes_gunicorn.sock classic_homes.wsgi:application[0m
+             ├─system-postgresql.slice 
+             │ └─postgresql@14-main.service 
+             │   ├─[0;38;5;245m2701551 /usr/lib/postgresql/14/bin/postgres -D /var/lib/postgresql/14/main -c config_file=/etc/postgresql/14/main/postgresql.conf[0m
+             │   ├─[0;38;5;245m2701553 postgres: 14/main: checkpointer[0m
+             │   ├─[0;38;5;245m2701554 postgres: 14/main: background writer[0m
+             │   ├─[0;38;5;245m2701555 postgres: 14/main: walwriter[0m
+             │   ├─[0;38;5;245m2701556 postgres: 14/main: autovacuum launcher[0m
+             │   ├─[0;38;5;245m2701557 postgres: 14/main: stats collector[0m
+             │   └─[0;38;5;245m2701558 postgres: 14/main: logical replication launcher[0m
+             ├─rsyslog.service 
+             │ └─[0;38;5;245m47599 /usr/sbin/rsyslogd -n -iNONE[0m
+             ├─classic-insides_gunicorn.service 
+             │ ├─[0;38;5;245m1531495 /home/classic-insides/insidesEnv/bin/python3 /home/classic-insides/insidesEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock classicinsides.wsgi:application[0m
+             │ ├─[0;38;5;245m1531496 /home/classic-insides/insidesEnv/bin/python3 /home/classic-insides/insidesEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock classicinsides.wsgi:application[0m
+             │ ├─[0;38;5;245m1531497 /home/classic-insides/insidesEnv/bin/python3 /home/classic-insides/insidesEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock classicinsides.wsgi:application[0m
+             │ └─[0;38;5;245m1531498 /home/classic-insides/insidesEnv/bin/python3 /home/classic-insides/insidesEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/gunicorn.sock classicinsides.wsgi:application[0m
+             ├─ezgrad_gunicorn.service 
+             │ ├─[0;38;5;245m2938575 /home/ez-grad/ezgradEnv/bin/python3 /home/ez-grad/ezgradEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ezgrad_gunicorn.sock EZGRAD.wsgi:application[0m
+             │ ├─[0;38;5;245m2938577 /home/ez-grad/ezgradEnv/bin/python3 /home/ez-grad/ezgradEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ezgrad_gunicorn.sock EZGRAD.wsgi:application[0m
+             │ ├─[0;38;5;245m2938578 /home/ez-grad/ezgradEnv/bin/python3 /home/ez-grad/ezgradEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ezgrad_gunicorn.sock EZGRAD.wsgi:application[0m
+             │ └─[0;38;5;245m2938579 /home/ez-grad/ezgradEnv/bin/python3 /home/ez-grad/ezgradEnv/bin/gunicorn --access-logfile - --workers 3 --bind unix:/run/ezgrad_gunicorn.sock EZGRAD.wsgi:application[0m
+             ├─systemd-resolved.service 
+             │ └─[0;38;5;245m47638 /lib/systemd/systemd-resolved[0m
+             ├─dbus.service 
+             │ └─[0;38;5;245m743 @dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only[0m
+             ├─systemd-timesyncd.service 
+             │ └─[0;38;5;245m47631 /lib/systemd/systemd-timesyncd[0m
+             ├─droplet-agent.service 
+             │ └─[0;38;5;245m1773184 /opt/digitalocean/bin/droplet-agent[0m
+             ├─system-getty.slice 
+             │ └─getty@tty1.service 
+             │   └─[0;38;5;245m800 /sbin/agetty -o -p -- \u --noclear tty1 linux[0m
+             └─systemd-logind.service 
+               └─[0;38;5;245m755 /lib/systemd/systemd-logind[0m
