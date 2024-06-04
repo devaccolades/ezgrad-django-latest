@@ -462,4 +462,13 @@ class AddEnquirySerializer(serializers.Serializer):
 class SuggestionAddSerializer(serializers.ModelSerializer):
     class Meta:
         model = CollageSuggestion
-        fields = ('service','university','profile_image','full_name','email','mobile')
+        fields = ['service','university','profile_image','full_name','email','mobile']
+
+
+
+class SuggestionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CollageSuggestion
+        fields = ['id','service','university','profile_image','full_name','email','mobile','redirect_link']
+        

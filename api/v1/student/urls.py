@@ -63,6 +63,7 @@ urlpatterns=[
     path('admin-filter-university/',views.admin_filter_university),
     
     path('add-suggetions/',views.SuggestedCollageAPIView.as_view()),
+    path('suggetions/',views.SuggestedCollageAPIView.as_view()),
 
 
 

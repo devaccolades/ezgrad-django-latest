@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User,Group
 from general.models import BaseModel
+from decouple import config
 
 STATUS_CHOICES = (
     ('approved', 'Approved'),
@@ -128,3 +129,11 @@ class CollageSuggestion(BaseModel):
     mobile=models.BigIntegerField(blank=True,null=True)
     date = models.DateTimeField(auto_now_add=True)
     redirect_link = models.TextField(blank=True,null=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.redirect_link = f'{config("main_url")}/share-profile/{self.id}'
+        super().save(update_fields=['redirect_link'])
+
+    def __str__(self):
+        return self.full_name if self.full_name else self.id

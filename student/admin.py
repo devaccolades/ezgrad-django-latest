@@ -1,5 +1,5 @@
 from django.contrib import admin
-from student.models import RecordAnswer,StudentRecord,StudentWishList,StudentProfile,Enquiry,ReviewStudent
+from student.models import RecordAnswer,StudentRecord,StudentWishList,StudentProfile,Enquiry,ReviewStudent,CollageSuggestion
 
 class RecordAnswerAdmin(admin.ModelAdmin):
     list_display = ['id', 'userid','option']
@@ -33,5 +33,5 @@ class EnquiryAdmin(admin.ModelAdmin):
 
 admin.site.register(Enquiry, EnquiryAdmin)
 
-
+admin.site.register(CollageSuggestion)
 # Register your models here.

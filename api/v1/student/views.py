@@ -3,12 +3,12 @@ from rest_framework.parsers import JSONParser
 from django.http.response import JsonResponse
 from django.http import HttpResponse
 from rest_framework.response import Response
-from student.models import StudentProfile,ReviewStudent,RecordAnswer,StudentRecord,StudentWishList,CustomUser,Enquiry
+from student.models import StudentProfile,ReviewStudent,RecordAnswer,StudentRecord,StudentWishList,CustomUser,Enquiry,CollageSuggestion
 from course.models import Country,University,Course,Specialization
 from api.v1.course.serializers import UniversitySerializer,UniversitylistSerializer,UniversitylistSpecializationSerializer,CourseviewSerializer
 from question.models import Options,Questions
 from api.v1.question.serializers import OptionSerializer
-from api.v1.student.serializers import RecordAnswerSerializer,AddEnquirySerializer,EnquirySerializer,CreateStudentRecordSerializer,StudentSingleRecordViewSerializer,StudentRecordViewSerializer,StudentDocumentSerializer,StudentRecordSerializer,AddWishListSerializer,StudentWishListSerializer,StudentProfileSerializer,ReviewStudentSerializer,AddStudentProfileSerializer,LoginSerializer,SuggestionAddSerializer
+from api.v1.student.serializers import RecordAnswerSerializer,AddEnquirySerializer,EnquirySerializer,CreateStudentRecordSerializer,StudentSingleRecordViewSerializer,StudentRecordViewSerializer,StudentDocumentSerializer,StudentRecordSerializer,AddWishListSerializer,StudentWishListSerializer,StudentProfileSerializer,ReviewStudentSerializer,AddStudentProfileSerializer,LoginSerializer,SuggestionAddSerializer,SuggestionSerializer
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import AllowAny
 from general.functions import generate_serializer_errors,check_username,randomnumber,generate_otp,send_otp_email
@@ -2160,19 +2160,24 @@ def admin_filter_university(request):
 
 
 class SuggestedCollageAPIView(APIView):
-    @group_required(['ezgrad_admin'])
+    # @group_required(['ezgrad_admin'])
     def post(self, request):
-        serializer = SuggestionAddSerializer(data=request.data)
+        print(request.data,'data')
+        data = request.data.copy()
+        if 'profile_image' not in data or data['profile_image'] == "":
+            data['profile_image'] = None
+        serializer = SuggestionAddSerializer(data=data)
+        
         if serializer.is_valid():
             serializer.save()
             response_data = {
-                "StatusCode": 6001,
+                "StatusCode": 6000,
                 "data": {
                     "title": "Success",
                     "Message": serializer.data
                 }
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+            return Response({'app_data':response_data})
         else:
             response_data = {
                 "StatusCode": 6001,
@@ -2181,7 +2186,30 @@ class SuggestedCollageAPIView(APIView):
                     "Message": serializer.errors
                 }
             }
-            return Response(response_data, status=status.HTTP_200_OK)
+            return Response({'app_data':response_data})
+        
+    def get(self, request):
+        try:
+            instance = CollageSuggestion.objects.filter(is_deleted=False).order_by('-date')
+            serializer = SuggestionSerializer(instance, many=True, context={'request': self.request})
+            response_data = {
+                "StatusCode": 6000,
+                "data": {
+                    "title": "Success",
+                    "data": serializer.data
+                }
+            }
+        except Exception as e:
+            print(f"Error occurred: {e}")
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": "An error occurred while processing your request."
+                }
+            }
+        return Response({'app_data': response_data})
+
 
 
 
