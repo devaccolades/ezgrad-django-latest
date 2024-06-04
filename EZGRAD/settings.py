@@ -159,11 +159,13 @@ EMAIL_USE_TLS=True
 EMAIL_HOST_USER=config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD=config("EMAIL_HOST_USER")
 
-# CORS_ALLOWED_ORIGINS  = [
-#     "http://127.0.0.1:5500",'https://ez-grad-chief.accoladesweb.com/','http://ez-grad-chief.accoladesweb.com/',
-#     "http://192.168.1.79:8000",
+CORS_ALLOWED_ORIGINS  = [
+    "http://chief.ezgrad.com","https://chief.ezgrad.com",
+    "http://user.ezgrad.com","https://user.ezgrad.com",
+    "http://ezgrad.com","https://ezgrad.com","http://www.ezgrad.com","https://www.ezgrad.com",
+    "http://localhost:3000"
  
-# ]
+]
 
 # CORS_ALLOW_CREDENTIALS = True
 
