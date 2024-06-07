@@ -64,6 +64,10 @@ urlpatterns=[
     
     path('add-suggetions/',views.SuggestedCollageAPIView.as_view()),
     path('suggetions/',views.SuggestedCollageAPIView.as_view()),
+    path('suggetions/<uuid:id>',views.SuggestedCollageAPIView.as_view()),
+    path('get-suggetions/<uuid:id>',views.GetUserSuggestData.as_view()),
+    
+    path('get-collage-info/<uuid:id>',views.SIngleCollageInfo.as_view()),
 
 
 

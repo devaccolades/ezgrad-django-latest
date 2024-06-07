@@ -132,7 +132,7 @@ class CollageSuggestion(BaseModel):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.redirect_link = f'{config("main_url")}/share-profile/{self.id}'
+        self.redirect_link = f'{config("main_url")}/suggested-collage/{self.id}'
         super().save(update_fields=['redirect_link'])
 
     def __str__(self):

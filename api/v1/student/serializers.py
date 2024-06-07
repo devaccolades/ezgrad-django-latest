@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from api.v1.question.serializers import OptionSerializer
+from api.v1.general.serializers import ListCountriesSerializer
 from student.models import StudentProfile,ReviewStudent,RecordAnswer,StudentWishList,StudentRecord,Enquiry,CollageSuggestion
 from question.models import Options
-from course.models import Country,University,UniversityDocuments
+from course.models import Country,University,UniversityDocuments,Facts,PlacementPartners,UniversityImages,Facilities,Course
 import os
 
 class CreateStudentRecordSerializer(serializers.Serializer):
@@ -467,8 +468,69 @@ class SuggestionAddSerializer(serializers.ModelSerializer):
 
 
 class SuggestionSerializer(serializers.ModelSerializer):
-
+    university = serializers.SerializerMethodField()
     class Meta:
         model = CollageSuggestion
         fields = ['id','service','university','profile_image','full_name','email','mobile','redirect_link']
-        
+    
+    def get_university(self, obj):
+        university_queryset = obj.university.all() 
+        university_data = []
+        for universit in university_queryset:
+            service_data = {
+                "id": universit.id,
+                "university_name": universit.university_name,
+                "service_name": universit.service.service,
+                "service":universit.service.id
+            }
+            university_data.append(service_data)
+        return university_data
+
+
+class SingleCollageInfo(serializers.ModelSerializer):
+    facility = serializers.SerializerMethodField()
+    country = serializers.SerializerMethodField()
+    facts = serializers.SerializerMethodField()
+    placement_partner = serializers.SerializerMethodField()
+    university_images = serializers.SerializerMethodField()
+    courses = serializers.SerializerMethodField()
+    class Meta:
+        model = University
+        fields = ['service','country','university_logo','university_image','university_name','about_university','sample_certificate','approved_by','student_choice','e_learning_facility','placement_assistance','facility','facts','placement_partner','university_images','courses']
+
+    def get_facility(self,obj):
+        if obj:
+            facilities=list(Facilities.objects.filter(university=obj.id,is_deleted=False).values('id','facility__facility','name','image').distinct('facility'))
+            return facilities
+        else:
+            return None
+    def get_country(self,obj):
+        if obj:
+            instance = list(obj.country.filter(is_deleted=False).values('id','country'))
+            return instance
+        else:
+            return None
+    def get_facts(self,obj):
+        if obj:
+            inscance = list(Facts.objects.filter(university=obj.id,is_deleted=False).values('id','facts'))
+            return inscance
+        else:
+            return None
+    def get_placement_partner(self,obj):
+        if obj:
+            instacne = list(PlacementPartners.objects.filter(university=obj.id,is_deleted=False).values('id','placement_partner_name','placement_partner_logo'))
+            return instacne
+        else:
+            return None
+    def get_university_images(self,obj):
+        if obj:
+            instance = list(UniversityImages.objects.filter(university=obj.id,is_deleted=False).values('id','image'))
+            return instance
+        else:
+            return None
+    def get_courses(self,obj):
+        if obj:
+            instance = list(Course.objects.filter(university=obj.id,is_deleted=False).values('id','course_name','duration'))
+            return instance
+        else:
+            return None

@@ -8,7 +8,7 @@ from course.models import Country,University,Course,Specialization
 from api.v1.course.serializers import UniversitySerializer,UniversitylistSerializer,UniversitylistSpecializationSerializer,CourseviewSerializer
 from question.models import Options,Questions
 from api.v1.question.serializers import OptionSerializer
-from api.v1.student.serializers import RecordAnswerSerializer,AddEnquirySerializer,EnquirySerializer,CreateStudentRecordSerializer,StudentSingleRecordViewSerializer,StudentRecordViewSerializer,StudentDocumentSerializer,StudentRecordSerializer,AddWishListSerializer,StudentWishListSerializer,StudentProfileSerializer,ReviewStudentSerializer,AddStudentProfileSerializer,LoginSerializer,SuggestionAddSerializer,SuggestionSerializer
+from api.v1.student.serializers import RecordAnswerSerializer,AddEnquirySerializer,EnquirySerializer,CreateStudentRecordSerializer,StudentSingleRecordViewSerializer,StudentRecordViewSerializer,StudentDocumentSerializer,StudentRecordSerializer,AddWishListSerializer,StudentWishListSerializer,StudentProfileSerializer,ReviewStudentSerializer,AddStudentProfileSerializer,LoginSerializer,SuggestionAddSerializer,SuggestionSerializer,SingleCollageInfo
 from rest_framework.decorators import api_view,permission_classes
 from rest_framework.permissions import AllowAny
 from general.functions import generate_serializer_errors,check_username,randomnumber,generate_otp,send_otp_email
@@ -2188,10 +2188,107 @@ class SuggestedCollageAPIView(APIView):
             }
             return Response({'app_data':response_data})
         
-    def get(self, request):
+    def get(self, request,id=None):
+        if id:
+            try:
+                instance = CollageSuggestion.objects.filter(id=id,is_deleted=False).first()
+                serializer = SuggestionSerializer(instance, context={'request': self.request})
+                response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "data": serializer.data
+                    }
+                }
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                response_data = {
+                    "StatusCode": 6001,
+                    "data": {
+                        "title": "Error",
+                        "Message": "An error occurred while processing your request."
+                    }
+                }
+        else:
+            try:
+                instance = CollageSuggestion.objects.filter(is_deleted=False).order_by('-date')
+                serializer = SuggestionSerializer(instance, many=True, context={'request': self.request})
+                response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "data": serializer.data
+                    }
+                }
+            except Exception as e:
+                print(f"Error occurred: {e}")
+                response_data = {
+                    "StatusCode": 6001,
+                    "data": {
+                        "title": "Error",
+                        "Message": "An error occurred while processing your request."
+                    }
+                }
+        return Response({'app_data': response_data})
+
+    def patch(self, request, id=None):
+        instance = self.get_object(id)
+        if not instance:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": "Id Not found"
+                }
+            }
+            return Response({'app_data': response_data})
+        else:
+            data = request.data.copy()
+            if 'profile_image' not in data or data['profile_image'] == "":
+                data['profile_image'] = instance.profile_image
+            serializer = SuggestionAddSerializer(instance, data=data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "data": serializer.data
+                    }
+                }
+                return Response({'app_data': response_data}, status=status.HTTP_200_OK)
+            else:
+                response_data = {
+                    "StatusCode": 6002,
+                    "data": {
+                        "title": "Error",
+                        "Message": serializer.errors
+                    }
+                }
+                return Response({'app_data': response_data})
+
+    def get_object(self, id):
         try:
-            instance = CollageSuggestion.objects.filter(is_deleted=False).order_by('-date')
-            serializer = SuggestionSerializer(instance, many=True, context={'request': self.request})
+            instance = CollageSuggestion.objects.filter(id=id, is_deleted=False).first()
+            return instance
+        except CollageSuggestion.DoesNotExist:
+            return None
+
+class GetUserSuggestData(APIView):
+    permission_classes = (AllowAny,)
+    def get(self,request,id):
+        instance = self.get_object(id)
+        if not instance:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": "Id Not found"
+                }
+            }
+            return Response({'app_data': response_data}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            serializer = SuggestionSerializer(instance,context={'request': self.request})
             response_data = {
                 "StatusCode": 6000,
                 "data": {
@@ -2199,32 +2296,47 @@ class SuggestedCollageAPIView(APIView):
                     "data": serializer.data
                 }
             }
-        except Exception as e:
-            print(f"Error occurred: {e}")
-            response_data = {
+            return Response({'app_data': response_data})
+
+    def get_object(self, id):
+        try:
+            instance = CollageSuggestion.objects.filter(id=id, is_deleted=False).first()
+            return instance
+        except CollageSuggestion.DoesNotExist:
+            return None
+        
+class SIngleCollageInfo(APIView):
+    permission_classes = (AllowAny,)
+    def get(self,request,id):
+        instance = self.get_object(id)
+        if not instance:
+             response_data = {
                 "StatusCode": 6001,
                 "data": {
                     "title": "Error",
-                    "Message": "An error occurred while processing your request."
+                    "Message": "Id Not found"
+                }
+            }
+        else:
+            serializer = SingleCollageInfo(instance,context={'request': self.request})
+            response_data = {
+                "StatusCode": 6000,
+                "data": {
+                    "title": "Success",
+                    "data": serializer.data,
+                    "Message": "Success"
+
                 }
             }
         return Response({'app_data': response_data})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def get_object(self,id):
+        try:
+            instance = University.objects.filter(id=id,is_deleted=False).first()
+            return instance
+        except Exception as e:
+             print(e)
+             return None
 
 
 
