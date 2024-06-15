@@ -1,5 +1,5 @@
 from django.contrib import admin
-from web.models import Contact,Details,Experts,Subbanner,MainBanner,PlacedStudent,Checklist,Blogs,Tags,Category,Careers,CareerApply,BlogComment,BlogReplyComment
+from web.models import Contact,Details,Experts,Subbanner,MainBanner,PlacedStudent,Checklist,Blogs,Tags,Category,Careers,CareerApply,BlogComment,BlogReplyComment,StudentTestimonials
 
 class MainBannerAdmin(admin.ModelAdmin):
     list_display=[
@@ -20,6 +20,13 @@ class SubbannerAdmin(admin.ModelAdmin):
     ]
 admin.site.register(Subbanner,SubbannerAdmin)
 
+class StudentTestimonialAdmin(admin.ModelAdmin):
+    list_display=[
+        'id',
+        'image',
+        'university',
+    ]
+admin.site.register(StudentTestimonials,StudentTestimonialAdmin)
 
 class ContactAdmin(admin.ModelAdmin):
     list_display=[

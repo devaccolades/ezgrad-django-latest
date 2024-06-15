@@ -100,18 +100,18 @@ class PlacedStudentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlacedStudent
         fields = ['id','image','name','graduated_university','year','placed_organisation','testimonial']
-# class AddStudentTestimonialSerializer(serializers.Serializer):
-#     image=serializers.ImageField()
-#     university=serializers.CharField()
+class AddStudentTestimonialSerializer(serializers.Serializer):
+    image=serializers.ImageField()
+    university=serializers.CharField()
 
-# class StudentTestimonialSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model=StudentTestimonials
-#         fields=(
-#             'id',
-#             'image',
-#             'university',
-#         )
+class StudentTestimonialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=StudentTestimonials
+        fields=(
+            'id',
+            'image',
+            'university',
+        )
 
 
 class CreateBlogSerializer(serializers.Serializer):

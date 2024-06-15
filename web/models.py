@@ -23,7 +23,12 @@ class Subbanner(models.Model):
         db_table='Subbanner'
 
 
-
+class StudentTestimonials(models.Model):
+    image=models.ImageField(upload_to='Images',blank=True,null=True)
+    university=models.CharField(max_length=300,blank=True,null=True)
+    is_deleted=models.BooleanField(default=False)
+    class Meta:
+        db_table='StudentTestimonials'
 
 
 class Contact(models.Model):
