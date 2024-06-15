@@ -13,6 +13,7 @@ from general.functions import generate_serializer_errors
 from general.decorators import group_required
 import random
 
+
 @api_view(['POST'])
 @group_required(['ezgrad_admin'])
 def add_question(request):

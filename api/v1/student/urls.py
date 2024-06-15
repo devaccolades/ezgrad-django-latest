@@ -45,6 +45,9 @@ urlpatterns=[
     path('specialization-filter-university/',views.specialization_filter_university),
     path('view-answer/',views.view_answer),
     path('delete-answer/<int:id>',views.delete_answer),
+
+    # add students question
+    path('add-student-answers/',views.StudentsAddAnswerAPIView.as_view()),
     # path('login/',views.UserLogin),
 
     path('count-enquiry/',views.count_enquiry),

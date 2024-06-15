@@ -10,7 +10,7 @@ class ServiceType(BaseModel):
         ordering = ('id',)
 
     def __str__(self):
-        return str(self.id)
+        return self.service
 
     
 class CourseType(models.Model):

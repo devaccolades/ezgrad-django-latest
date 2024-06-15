@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from web.models import *
 from api.v1.web.serializers import *
 from rest_framework.decorators import api_view,permission_classes
+from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from general.functions import generate_serializer_errors
 from general.decorators import group_required
@@ -832,156 +833,156 @@ def bulk_remove_experts(request):
         
     
 
-@api_view(['POST'])
-@group_required(['ezgrad_admin'])
-def add_student_testimonials(request):
-    serialized_data=AddStudentTestimonialSerializer(data=request.data)
-    if serialized_data.is_valid():
-        image=request.data['image']
-        university=request.data['university']
-        testimonial=StudentTestimonials.objects.create(image=image,
-                                                       university=university)
-        response_data={
-            "StatusCode":6000,
-            "data":{
-                "title":"Success",
-                "Message":"Added Successfully"
-            }
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['POST'])
+# @group_required(['ezgrad_admin'])
+# def add_student_testimonials(request):
+#     serialized_data=AddStudentTestimonialSerializer(data=request.data)
+#     if serialized_data.is_valid():
+#         image=request.data['image']
+#         university=request.data['university']
+#         testimonial=StudentTestimonials.objects.create(image=image,
+#                                                        university=university)
+#         response_data={
+#             "StatusCode":6000,
+#             "data":{
+#                 "title":"Success",
+#                 "Message":"Added Successfully"
+#             }
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
 
 
-@api_view(['GET'])
-@group_required(['ezgrad_admin'])
-def view_student_testimonials(request):
-    if (testimonial:=StudentTestimonials.objects.filter(is_deleted=False)).exists():
-        serialized_data=StudentTestimonialSerializer(testimonial,
-                                                     context={
-                                                         "request":request,
-                                                     },many=True,).data
-        response_data={
-            "StatusCode":6000,
-            "data":serialized_data
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['GET'])
+# @group_required(['ezgrad_admin'])
+# def view_student_testimonials(request):
+#     if (testimonial:=StudentTestimonials.objects.filter(is_deleted=False)).exists():
+#         serialized_data=StudentTestimonialSerializer(testimonial,
+#                                                      context={
+#                                                          "request":request,
+#                                                      },many=True,).data
+#         response_data={
+#             "StatusCode":6000,
+#             "data":serialized_data
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
 
 
-@api_view(['PUT'])
-@group_required(['ezgrad_admin'])
-def edit_student_testimonials(request,id):
-    image=request.data.get('image')
-    university=request.data.get('university')
-    if (testimonial:=StudentTestimonials.objects.filter(id=id,is_deleted=False)).exists():
-        testimonials=testimonial.latest('id')
-        if image:
-            testimonials.image=image
-        if university:
-            testimonials.university=university
-        testimonials.save()
-        response_data={
-            "StatusCode":6000,
-            "data":{
-                "title":"Success",
-                "Message":"Updated Successfully"
-            }
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['PUT'])
+# @group_required(['ezgrad_admin'])
+# def edit_student_testimonials(request,id):
+#     image=request.data.get('image')
+#     university=request.data.get('university')
+#     if (testimonial:=StudentTestimonials.objects.filter(id=id,is_deleted=False)).exists():
+#         testimonials=testimonial.latest('id')
+#         if image:
+#             testimonials.image=image
+#         if university:
+#             testimonials.university=university
+#         testimonials.save()
+#         response_data={
+#             "StatusCode":6000,
+#             "data":{
+#                 "title":"Success",
+#                 "Message":"Updated Successfully"
+#             }
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
         
 
-@api_view(['DELETE'])
-@group_required(['ezgrad_admin'])
-def delete_student_testimonials(request,id):
-    if (testimonials:=StudentTestimonials.objects.filter(id=id,is_deleted=False)).exists():
-        testimonial=testimonials.latest('id')
-        testimonial.is_deleted=True
-        testimonial.save()
-        response_data={
-            "StatusCode":6000,
-            "data":{
-                "title":"Success",
-                "Message":"Deleted Successfully"
-            }
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['DELETE'])
+# @group_required(['ezgrad_admin'])
+# def delete_student_testimonials(request,id):
+#     if (testimonials:=StudentTestimonials.objects.filter(id=id,is_deleted=False)).exists():
+#         testimonial=testimonials.latest('id')
+#         testimonial.is_deleted=True
+#         testimonial.save()
+#         response_data={
+#             "StatusCode":6000,
+#             "data":{
+#                 "title":"Success",
+#                 "Message":"Deleted Successfully"
+#             }
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
 
 
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def list_student_testimonials(request):
-    if (testimonial:=StudentTestimonials.objects.filter(is_deleted=False)).exists():
-        serialized_data=StudentTestimonialSerializer(testimonial,
-                                                     context={
-                                                         "request":request,
-                                                     },many=True,).data
-        response_data={
-            "StatusCode":6000,
-            "data":serialized_data
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['GET'])
+# @permission_classes([AllowAny])
+# def list_student_testimonials(request):
+#     if (testimonial:=StudentTestimonials.objects.filter(is_deleted=False)).exists():
+#         serialized_data=StudentTestimonialSerializer(testimonial,
+#                                                      context={
+#                                                          "request":request,
+#                                                      },many=True,).data
+#         response_data={
+#             "StatusCode":6000,
+#             "data":serialized_data
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
 
 
-@api_view(['DELETE'])
-@group_required(['ezgrad_admin'])
-def bulk_remove_student_testimonials(request):
-    student=StudentTestimonials.objects.all()
-    if student.exists():
-        student.update(is_deleted=True)
-        response_data={
-            "StatusCode":6000,
-            "data":{
-                "title":"Success",
-                "Message":"Deleted Successfully"
-            }
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+# @api_view(['DELETE'])
+# @group_required(['ezgrad_admin'])
+# def bulk_remove_student_testimonials(request):
+#     student=StudentTestimonials.objects.all()
+#     if student.exists():
+#         student.update(is_deleted=True)
+#         response_data={
+#             "StatusCode":6000,
+#             "data":{
+#                 "title":"Success",
+#                 "Message":"Deleted Successfully"
+#             }
+#         }
+#     else:
+#         response_data={
+#             "StatusCode":6001,
+#             "data":{
+#                 "title":"Failed",
+#                 "Message":"Not Found"
+#             }
+#         }
+#     return Response({'app_data':response_data})
 
 
 
@@ -2248,6 +2249,127 @@ def list_checklist(request):
 
     return Response({'app_data': response_data}, status=status.HTTP_200_OK)
 
+from datetime import date
+
+class PlacedStudentAPIView(APIView):
+    @group_required(['ezgrad_admin'])
+    def post(self,request):
+        data = request.data.copy()
+        if 'profile_image' not in data or data['profile_image'] == "":
+            data['profile_image'] = None
+        if 'year' not in data or data['year'] == "":
+            data['year'] = date.today().isoformat()
+        serializer = PlacedStudentSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            response_data = {
+                "StatusCode": 6000,
+                "data": {
+                    "title": "Success",
+                    "data": serializer.data,
+                    "Message": "Placed Student Added"
+                }
+            }
+        else:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": serializer.errors
+                }
+            }
+        return Response({'app_data':response_data})
+    def get(self,request,id=None):
+        try:
+            if id:
+                instance = PlacedStudent.objects.filter(id=id,is_deleted=False)
+                serializer = PlacedStudentSerializer(instance,many=True)
+            else:
+                instance = PlacedStudent.objects.filter(is_deleted=False)
+                serializer = PlacedStudentSerializer(instance,many=True,context={'request': self.request})
+            response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "data": serializer.data,
+                        "Message": "Placed Student list"
+                    }
+                }
+        except:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": serializer.errors
+                }
+            }
+        return Response({'app_data':response_data})
+    
+    def patch(self, request, id=None):
+        instance = self.get_object(id)
+        if not instance:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": "Id Not found"
+                }
+            }
+            return Response({'app_data': response_data})
+        else:
+            data = request.data.copy()
+            if 'image' not in data or data['image'] == "" or data['image'] == "undefined":
+                data['image'] = instance.image
+            serializer = PlacedStudentSerializer(instance, data=data, partial=True)
+            print(serializer)
+            if serializer.is_valid():
+                serializer.save()
+                response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "data": serializer.data
+                    }
+                }
+                return Response({'app_data': response_data}, status=status.HTTP_200_OK)
+            else:
+                response_data = {
+                    "StatusCode": 6002,
+                    "data": {
+                        "title": "Error",
+                        "Message": serializer.errors
+                    }
+                }
+                return Response({'app_data': response_data})
+    def delete(self,request,id):
+        instance = self.get_object(id)
+        if not instance:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Error",
+                    "Message": "Id Not found"
+                }
+            }
+        else:
+            instance.is_deleted = True
+            instance.save()
+            response_data = {
+                "StatusCode": 6000,
+                "data": {
+                    "title": "Success",
+                    "Message": "Updated"
+                }
+            }
+        return Response({'app_data': response_data})
+
+    def get_object(self, id):
+        try:
+            instance = PlacedStudent.objects.filter(id=id, is_deleted=False).first()
+            return instance
+        except PlacedStudent.DoesNotExist:
+            return None
 
 
 # @api_view(['POST'])

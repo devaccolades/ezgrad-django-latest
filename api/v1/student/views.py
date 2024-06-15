@@ -106,10 +106,18 @@ def calculate_age(request):
 
     return Response({'app_data':response_data})
 
+from rest_framework_simplejwt.tokens import RefreshToken
+def get_tokens_for_user(user):
+    refresh = RefreshToken.for_user(user)
 
+    return {
+        'refresh': str(refresh),
+        'access': str(refresh.access_token),
+    }
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_student(request):
+    response_data = {}
     try:
         serialized_data = AddStudentProfileSerializer(data=request.data)
         if serialized_data.is_valid():
@@ -120,125 +128,123 @@ def register_student(request):
             gender = request.data.get('gender', '')
             dob = request.data.get('dob', '')
 
-            existing_student = StudentProfile.objects.filter(
-                Q(email=email) | Q(mobile=mobile), is_deleted=False
-            ).first()
+            with transaction.atomic():
+                existing_student = StudentProfile.objects.filter(
+                    Q(email=email) | Q(mobile=mobile), is_deleted=False
+                ).first()
 
-            if existing_student:
-               
-                if name:
-                    existing_student.name = name
-                if gender:
-                    existing_student.gender = gender
-                if dob:
-                    existing_student.dob = dob
-                if email:
-                     existing_student.email=email
-                if country_code:
-                     existing_student.country_code=country_code
-                existing_student.save()
+                if existing_student:
+                    if name:
+                        existing_student.name = name
+                    if gender:
+                        existing_student.gender = gender
+                    if dob:
+                        existing_student.dob = dob
+                    if email:
+                        existing_student.email = email
+                    if country_code:
+                        existing_student.country_code = country_code
+                    existing_student.save()
 
-                username = existing_student.username  
-                password = existing_student.password  
+                    username = existing_student.username
+                    password = existing_student.password
 
-                headers = {
-                    "Content-Type": "application/json"
-                }
-                data = {
-                    "username": username,
-                    "password": password,
-                }
+                    headers = {"Content-Type": "application/json"}
+                    data = {"username": username, "password": password}
 
-                protocol = "http://"
-                if request.is_secure():
-                    protocol = "https://"
+                    protocol = "http://"
+                    if request.is_secure():
+                        protocol = "https://"
 
-                host = request.get_host()
+                    host = request.get_host()
+                    url = protocol + host + "/api/token/"
+                    response = requests.post(url, headers=headers, data=json.dumps(data))
 
-                url = protocol + host + "/api/token/"
-                response = requests.post(url, headers=headers, data=json.dumps(data))
-
-                if response.status_code == 200:
-                    response = response.json()
-                    response_data = {
-                        "StatusCode": 6000,
-                        "data": {
-                            "title": "Success",
-                            "message": "Updated Successfully",
-                            "userid": existing_student.id,
-                            "access_token": response["access"],
-                            "refresh_token": response["refresh"],
-                        }
-                    }
-                else:
-                    response_data = {
-                        "StatusCode": 6001,
-                        "data": {
-                            "title": "Failed",
-                            "Message": "Failed to retrieve access token after update."
-                        }
-                    }
-                        
-            else:
-                
-                student_profile = StudentProfile.objects.create(
-                    name=name, email=email, mobile=mobile, gender=gender, dob=dob,country_code=country_code
-                )
-                context = {'name':name,'email':email,'mobile':mobile}
-                template = get_template('index.html').render(context)
-                e=settings.EMAIL_HOST_USER
-                send_mail(
-                    'Enquiry Data',
-                    None, 
-                    settings.EMAIL_HOST_USER,
-                    [e],
-                    fail_silently=False,
-                    html_message = template,
-                    )
-                password = User.objects.make_random_password(length=12, allowed_chars="abcdefghjkmnpqrstuvwzyx#@*%$ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
-                sliced_phone = mobile[-4:]
-                username = f'EZG{sliced_phone}{randomnumber(4)}'
-                username = check_username(username)
-                headers = {
-                        "Content-Type": "application/json"
-                    }
-                data={
-                        "username": username,
-                        "password": password,
-                    }
-                
-                user = User.objects.create_user(
-                                username=username,
-                                password=password
-                            ) 
-                student_profile.user = user
-                student_profile.username = username
-                student_profile.password = password                  
-                student_profile.save()
-
-                student_group, created = Group.objects.get_or_create(name='ezgrad_student')
-                student_group.user_set.add(user)
-                protocol = "http://"
-                if request.is_secure():
-                    protocol = "https://"
-
-                host = request.get_host()
-
-                url = protocol + host + "/api/token/"
-                response = requests.post(url, headers=headers, data=json.dumps(data))
-                if response.status_code == 200:
+                    if response.status_code == 200:
                         response = response.json()
-                        response_data={
-                        "StatusCode" : 6000,
-                        "data":{
-                            "title":"Success",
-                            "Message":"Registered Successfully ",
-                            "userid":student_profile.id,
-                            "access_token" : response["access"],
-                            "refresh_token" : response["refresh"],
-
+                        response_data = {
+                            "StatusCode": 6000,
+                            "data": {
+                                "title": "Success",
+                                "message": "Updated Successfully",
+                                "userid": existing_student.id,
+                                "access_token": response["access"],
+                                "refresh_token": response["refresh"],
+                            }
                         }
-                    } 
+                    else:
+                        response_data = {
+                            "StatusCode": 6001,
+                            "data": {
+                                "title": "Failed",
+                                "Message": "Failed to retrieve access token after update."
+                            }
+                        }
+
+                else:
+                    student_profile = StudentProfile.objects.create(
+                        name=name, email=email, mobile=mobile, gender=gender, dob=dob, country_code=country_code
+                    )
+                    context = {'name': name, 'email': email, 'mobile': mobile}
+                    template = get_template('index.html').render(context)
+                    e = settings.EMAIL_HOST_USER
+                    send_mail(
+                        'Enquiry Data',
+                        None, 
+                        settings.EMAIL_HOST_USER,
+                        [e],
+                        fail_silently=False,
+                        html_message=template,
+                    )
+
+                    password = User.objects.make_random_password(length=12, allowed_chars="abcdefghjkmnpqrstuvwzyx#@*%$ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
+                    sliced_phone = mobile[-4:]
+                    username = f'EZG{sliced_phone}{randomnumber(4)}'
+                    username = check_username(username)
+                    headers = {"Content-Type": "application/json"}
+                    data = {"username": username, "password": password}
+
+                    user = User.objects.create_user(
+                        username=username,
+                        password=password,
+                        is_active=True
+                    )
+                    student_profile.user = user
+                    student_profile.username = username
+                    student_profile.password = password
+                    student_profile.save()
+
+                    student_group, created = Group.objects.get_or_create(name='ezgrad_student')
+                    student_group.user_set.add(user)
+
+                    # protocol = "http://"
+                    # if request.is_secure():
+                    #     protocol = "https://"
+
+                    # host = request.get_host()
+                    # url = protocol + host + "/api/token/"
+                    
+                    response = get_tokens_for_user(user)
+ 
+                    if response:
+                        response_data = {
+                            "StatusCode": 6000,
+                            "data": {
+                                "title": "Success",
+                                "Message": "Registered Successfully ",
+                                "userid": student_profile.id,
+                                "access_token": response["access"],
+                                "refresh_token": response["refresh"],
+                            }
+                        }
+                    else:
+                        response_data = {
+                            "StatusCode": 6001,
+                            "data": {
+                                "title": "Failed",
+                                "Message": "Failed to retrieve access token after registration."
+                            }
+                        }
 
         else:
             response_data = {
@@ -248,8 +254,9 @@ def register_student(request):
                     "Message": generate_serializer_errors(serialized_data._errors)
                 }
             }
+
     except Exception as e:
-        transaction.rollback()
+        print(e)
         errType = e.__class__.__name__
         errors = {
             errType: traceback.format_exc()
@@ -261,8 +268,8 @@ def register_student(request):
             "message": str(e),
             "response": errors
         }
-    return Response({'app_data': response_data}, status=status.HTTP_200_OK)
 
+    return Response({'app_data': response_data}, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @group_required(['ezgrad_admin'])
@@ -597,6 +604,7 @@ def student_login(request):
         country_code=request.data['country_code']
         if StudentProfile.objects.filter(country_code=country_code,mobile=mobile,is_deleted=False).exists():
              student_profile=StudentProfile.objects.get(country_code=country_code,mobile=mobile,is_deleted=False) 
+             print(student_profile,'daxo')
              headers = {
                     "Content-Type": "application/json"
                 }
@@ -637,6 +645,7 @@ def student_login(request):
                         }
                     }
         else:
+                
                 response_data = {
                     "StatusCode": 6001,
                     "data" : {
@@ -799,6 +808,49 @@ def add_answer(request):
     return Response({'app_data': response_data})
 
 
+class StudentsAddAnswerAPIView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        user_id = request.data.get('user_id')
+        answers = request.data.get('answers')
+        try:
+            student_instance = StudentProfile.objects.get(id=user_id, is_deleted=False)
+        except StudentProfile.DoesNotExist:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": "User Not Found"
+                }
+            }
+            return Response({'app_data': response_data})
+        try:
+            with transaction.atomic():
+                RecordAnswer.objects.filter(userid=student_instance.id).delete()
+
+                for option_id in answers:
+                    options_instance = Options.objects.filter(id=option_id).first()
+                    RecordAnswer.objects.create(userid=student_instance, option=options_instance)
+
+                response_data = {
+                    "StatusCode": 6000,
+                    "data": {
+                        "title": "Success",
+                        "Message": "Updated"
+                    }
+                }
+        except Exception as e:
+            print(e)
+            response_data = {
+                "StatusCode": 6002,
+                "data": {
+                    "title": "Failed",
+                    "Message": "An error occurred"
+                }
+            }
+        return Response({'app_data': response_data})
+
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def filter_university(request):
@@ -845,9 +897,11 @@ def filter_university(request):
                         }
                 else:
                     for option_id in option:
-                        
-                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,course__course_name=course,country__in=country)
                             
+                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,course__course_name=course,country__in=country)
+                            if not universities:
+                                universities = University.objects.filter(options=option_id.option)
+
                         
                             serialized_data=UniversitylistSerializer(universities,
                                                         context={
@@ -1878,9 +1932,10 @@ def add_enquiry(request):
     return Response({'app_data' : response_data})
     
   except Exception as E:
+    print(E)
     return Response({'app_data' : 'something went wrong'}, status=status.HTTP_400_BAD_REQUEST)
 
-
+# class
 @api_view(['GET'])
 @group_required(['ezgrad_admin'])
 def view_enquiry(request):
@@ -2162,7 +2217,6 @@ def admin_filter_university(request):
 class SuggestedCollageAPIView(APIView):
     # @group_required(['ezgrad_admin'])
     def post(self, request):
-        print(request.data,'data')
         data = request.data.copy()
         if 'profile_image' not in data or data['profile_image'] == "":
             data['profile_image'] = None

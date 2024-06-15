@@ -38,12 +38,14 @@ urlpatterns=[
     path('bulk-remove-experts/',views.bulk_remove_experts),
 
 
-    path('add-student-testimonials/',views.add_student_testimonials),
-    path('view-student-testimonials/',views.view_student_testimonials),
-    path('edit-student-testimonials/<int:id>',views.edit_student_testimonials),
-    path('delete-student-testimonials/<int:id>',views.delete_student_testimonials),
-    path('list-student-testimonials/',views.list_student_testimonials),
-    path('bulk-remove-student-testimonials/',views.bulk_remove_student_testimonials),
+    path('add-placed-student/',views.PlacedStudentAPIView.as_view()),
+    path('view-placed-student/',views.PlacedStudentAPIView.as_view()),
+    path('edit-placed-student/<uuid:id>',views.PlacedStudentAPIView.as_view()),
+    path('delete-placed-student/<uuid:id>',views.PlacedStudentAPIView.as_view()),
+    # path('edit-student-testimonials/<int:id>',views.edit_student_testimonials),
+    # path('delete-student-testimonials/<int:id>',views.delete_student_testimonials),
+    # path('list-student-testimonials/',views.list_student_testimonials),
+    # path('bulk-remove-student-testimonials/',views.bulk_remove_student_testimonials),
 
     path('add-blog/',views.add_blog),
     path('view-blog/',views.view_blog),

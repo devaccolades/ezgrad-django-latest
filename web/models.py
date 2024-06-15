@@ -64,14 +64,21 @@ class Experts(models.Model):
         db_table='Experts'
     
     
+class PlacedStudent(BaseModel):
+    image = models.ImageField(upload_to='Images', blank=True, null=True)
+    name = models.CharField(max_length=300, blank=True, null=True)
+    graduated_university = models.CharField(max_length=300, blank=True, null=True)
+    year = models.DateField(null=True, blank=True)
+    placed_organisation = models.CharField(max_length=300, null=True, blank=True)
+    testimonial = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
-class StudentTestimonials(models.Model):
-    image=models.ImageField(upload_to='Images',blank=True,null=True)
-    university=models.CharField(max_length=300,blank=True,null=True)
-    is_deleted=models.BooleanField(default=False)
     class Meta:
-        db_table='StudentTestimonials'
-   
+        db_table = 'PlacedStudent'
+        ordering = ['-created_at'] 
+
+    def __str__(self):
+        return self.name if self.name else "Placed Student"
 
 class Blogs(BaseModel):
     category=models.ManyToManyField("web.Category", blank=True)
