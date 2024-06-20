@@ -642,12 +642,14 @@ class CourseSerializer(serializers.ModelSerializer):
     admission_procedure_points=serializers.SerializerMethodField()
     course_type=serializers.SerializerMethodField()
     specialization=serializers.SerializerMethodField()
+    service=serializers.SerializerMethodField()
     class Meta:
         model=Course
         fields=(
             'id',
             'course_name',
             'course_type',
+            'service',
             'icon',
             'duration',
             'duration_description',
@@ -675,6 +677,11 @@ class CourseSerializer(serializers.ModelSerializer):
     def get_course_type(self,instance):
         if instance:
             return instance.course_type.course_type
+        else:
+            return None
+    def get_service(self,instance):
+        if instance:
+            return instance.course_type.service.id
         else:
             return None
     def get_admission_procedure_points(self,instance):
