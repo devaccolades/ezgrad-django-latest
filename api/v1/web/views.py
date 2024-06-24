@@ -2371,7 +2371,27 @@ class PlacedStudentAPIView(APIView):
         except PlacedStudent.DoesNotExist:
             return None
 
-
+api_view(['GET'])
+@permission_classes([AllowAny])
+def list_placed_student_testimonials(request):
+    if (testimonial:=PlacedStudent.objects.filter(is_deleted=False)).exists():
+        serialized_data=PlacedStudentSerializer(testimonial,
+                                                     context={
+                                                         "request":request,
+                                                     },many=True,).data
+        response_data={
+            "StatusCode":6000,
+            "data":serialized_data
+        }
+    else:
+        response_data={
+            "StatusCode":6001,
+            "data":{
+                "title":"Failed",
+                "Message":"Not Found"
+            }
+        }
+    return Response({'app_data':response_data})
 # @api_view(['POST'])
 # @permission_classes([AllowAny])
 # def test(request):

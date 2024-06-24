@@ -42,6 +42,7 @@ urlpatterns=[
     path('view-placed-student/',views.PlacedStudentAPIView.as_view()),
     path('edit-placed-student/<uuid:id>',views.PlacedStudentAPIView.as_view()),
     path('delete-placed-student/<uuid:id>',views.PlacedStudentAPIView.as_view()),
+    path('list-placed-student/',views.list_placed_student_testimonials),
     path('edit-student-testimonials/<int:id>',views.edit_student_testimonials),
     path('delete-student-testimonials/<int:id>',views.delete_student_testimonials),
     path('list-student-testimonials/',views.list_student_testimonials),
