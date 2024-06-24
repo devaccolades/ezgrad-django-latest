@@ -4,6 +4,7 @@ from django.http.response import JsonResponse
 from django.http import HttpResponse
 from rest_framework.response import Response
 from student.models import StudentProfile,ReviewStudent,RecordAnswer,StudentRecord,StudentWishList,CustomUser,Enquiry,CollageSuggestion
+from service import models as service_model
 from course.models import Country,University,Course,Specialization
 from api.v1.course.serializers import UniversitySerializer,UniversitylistSerializer,UniversitylistSpecializationSerializer,CourseviewSerializer
 from question.models import Options,Questions
@@ -864,7 +865,6 @@ def filter_university(request):
                 user=reg.latest('id')
                 universities_data=[]
                 option=RecordAnswer.objects.filter(userid=user)
-                
                 if specialization:
                         for option_id in option:
                         # co=Specialization.objects.filter(id=specialization,course__course_name=course)
@@ -896,34 +896,40 @@ def filter_university(request):
                             }
                         }
                 else:
-                    for option_id in option:
+                    # for option_id in option:
                             
-                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,course__course_name=course,country__in=country)
-                            if not universities:
-                                universities = University.objects.filter(options=option_id.option)
+                    #         universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,course__course_name=course,country__in=country)
+                    #         if not universities:
+                    #             universities = University.objects.filter(options=option_id.option)
 
                         
-                            serialized_data=UniversitylistSerializer(universities,
+                    #         serialized_data=UniversitylistSerializer(universities,
+                    #                                     context={
+                    #                                         "course_name" : course,
+                    #                                         "userid":userid,
+                    #                                         'request':request,
+                    #                                     },many=True,).data
+                    #         universities_data.extend(serialized_data)
+                            
+                    #         unique_universities_list = []
+
+
+                    #         for university in universities_data:
+                    #                 if university not in unique_universities_list:
+                    #                     unique_universities_list.append(university)
+                    course_type_instance = service_model.CourseType.objects.filter(id=coursetype).first()
+                    universities_data = University.objects.filter(service__service=course_type_instance.service).distinct()
+                    serialized_data=UniversitylistSerializer(universities_data,
                                                         context={
                                                             "course_name" : course,
                                                             "userid":userid,
                                                             'request':request,
                                                         },many=True,).data
-                            universities_data.extend(serialized_data)
-                            
-                            unique_universities_list = []
-
-
-                            for university in universities_data:
-                                    if university not in unique_universities_list:
-                                        unique_universities_list.append(university)
-                            
-                            
                     
                     response_data={
                             "StatusCode":6000,
                             "data":{
-                                "universities":unique_universities_list,
+                                "universities":serialized_data,
                             }
                         }
             else:
