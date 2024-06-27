@@ -39,6 +39,9 @@ class StudentProfile(BaseModel):
         db_table="StudentProfile"
         ordering = ('-register_date',)
 
+    def __str__(self):
+        return self.username if self.username else self.email
+
 class ReviewStudent(models.Model):
     university=models.ForeignKey('course.University',on_delete=models.CASCADE,blank=True,null=True)
     name=models.CharField(max_length=200,blank=True,null=True)

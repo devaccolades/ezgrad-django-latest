@@ -30,6 +30,7 @@ urlpatterns=[
     path('bulk-remove-student-record/',views.bulk_remove_student_record),
 
 
+
     path('add-wishlist/',views.add_wishlist),
     path('list-wishlist/',views.list_wishlist),
     path('remove-wishlist/',views.remove_wishlist),

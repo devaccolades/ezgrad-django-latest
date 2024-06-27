@@ -600,6 +600,7 @@ def login_otp(request):
 @permission_classes([AllowAny])
 def student_login(request):
      serialized_data=LoginSerializer(data=request.data)
+     last_url = request.data.get('last_url')
      if serialized_data.is_valid():
         mobile=request.data['mobile']
         country_code=request.data['country_code']
@@ -634,7 +635,8 @@ def student_login(request):
                             # "phone": mobile,
                             "access_token" : response["access"],
                             "refresh_token" : response["refresh"],
-                            "userid":student_profile.id
+                            "userid":student_profile.id,
+                            "last_url":last_url
                         }
                     }
              else:
@@ -1403,7 +1405,9 @@ def view_student_record(request):
         if q:
             std = record.filter(
                     Q(status__icontains=q) | 
-                    Q(course__course_name__icontains=q) 
+                    Q(course__course_name__icontains=q) |
+                    Q(student__name__icontains=q) |
+                    Q(student__email__icontains=q) 
                     
                 )
         

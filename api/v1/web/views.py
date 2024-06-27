@@ -17,6 +17,8 @@ from django.db import transaction
 from django.db.models import Q
 from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 import json
+from datetime import date
+from django.utils.decorators import method_decorator
 
 @api_view(['POST'])
 @group_required(['ezgrad_admin'])
@@ -2249,10 +2251,10 @@ def list_checklist(request):
 
     return Response({'app_data': response_data}, status=status.HTTP_200_OK)
 
-from datetime import date
+
 
 class PlacedStudentAPIView(APIView):
-    @group_required(['ezgrad_admin'])
+    @method_decorator(group_required(['ezgrad_admin']))
     def post(self,request):
         data = request.data.copy()
         if 'profile_image' not in data or data['profile_image'] == "":
@@ -2371,27 +2373,18 @@ class PlacedStudentAPIView(APIView):
         except PlacedStudent.DoesNotExist:
             return None
 
-api_view(['GET'])
+@api_view(['GET'])
 @permission_classes([AllowAny])
 def list_placed_student_testimonials(request):
-    if (testimonial:=PlacedStudent.objects.filter(is_deleted=False)).exists():
-        serialized_data=PlacedStudentSerializer(testimonial,
-                                                     context={
-                                                         "request":request,
-                                                     },many=True,).data
-        response_data={
-            "StatusCode":6000,
-            "data":serialized_data
-        }
-    else:
-        response_data={
-            "StatusCode":6001,
-            "data":{
-                "title":"Failed",
-                "Message":"Not Found"
-            }
-        }
-    return Response({'app_data':response_data})
+    placed_student_instance = PlacedStudent.objects.filter(is_deleted=False)
+    serialized_data = PlacedStudentSerializer(placed_student_instance, context={"request": request}, many=True)
+    
+    response_data = {
+        "StatusCode": 6000,
+        "data": serialized_data.data
+    }
+    
+    return Response(response_data)
 # @api_view(['POST'])
 # @permission_classes([AllowAny])
 # def test(request):

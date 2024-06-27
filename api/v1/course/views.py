@@ -156,7 +156,8 @@ def view_university(request):
 
 
 @api_view(['GET'])
-@group_required(['ezgrad_admin'])
+# @group_required(['ezgrad_admin'])
+@permission_classes([AllowAny])
 def view_single_university(request,pk):
     if (university:=University.objects.filter(pk=pk,is_deleted=False)).exists():
         serialized_data=UniversitySerializer(university,

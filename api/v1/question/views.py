@@ -73,12 +73,15 @@ def view_question(request):
                     "question": question.question,
                     "question_id": question.pk,
                     "options": serialized_data,
+                    "service": question.service.id if question.service else None,
+
                 }
                 list_data.append(question_data)
             else:
                 list_data.append({
                     "question": question.question,
                     "question_id":question.pk,
+                    "service": question.service.id if question.service else None,
                     "options": []
                 })
 
