@@ -872,7 +872,7 @@ def filter_university(request):
                         # co=Specialization.objects.filter(id=specialization,course__course_name=course)
                         # c=co.latest('id')
                         # if c:
-                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,specialization__course__course_name=course,country__in=country,specialization__specialization_name=specialization)
+                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,specialization__course__course_name=course,country__in=country,specialization__specialization_name=specialization).order_by('-student_review')
                             
                         
                             serialized_data=UniversitylistSpecializationSerializer(universities,
@@ -920,7 +920,7 @@ def filter_university(request):
                     #                 if university not in unique_universities_list:
                     #                     unique_universities_list.append(university)
                     course_type_instance = service_model.CourseType.objects.filter(id=coursetype).first()
-                    universities_data = University.objects.filter(service__service=course_type_instance.service).distinct()
+                    universities_data = University.objects.filter(service__service=course_type_instance.service).distinct().order_by('-student_review')
                     serialized_data=UniversitylistSerializer(universities_data,
                                                         context={
                                                             "course_name" : course,
