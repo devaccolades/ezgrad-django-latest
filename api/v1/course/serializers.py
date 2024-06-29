@@ -53,6 +53,7 @@ class UniversitylistSerializer(serializers.ModelSerializer):
             'facility', 
             'rating',
             'wishlist',
+            'top_rated',
             'slug',
         )
     def get_course(self,instance):
@@ -154,6 +155,7 @@ class UniversitylistSpecializationSerializer(serializers.ModelSerializer):
             'facility', 
             'rating',
             'wishlist',
+            'top_rated',
             'slug',
         )
 
@@ -924,6 +926,7 @@ class CurrencySerializer(serializers.ModelSerializer):
 
 class SpecializationSerializer(serializers.ModelSerializer):
     course_name=serializers.SerializerMethodField()
+    university_name = serializers.SerializerMethodField()
     course_type=serializers.SerializerMethodField()
     service=serializers.SerializerMethodField()
     count=serializers.SerializerMethodField()
@@ -934,6 +937,7 @@ class SpecializationSerializer(serializers.ModelSerializer):
             'id',
             'slug',
             'university',
+            'university_name',
             'course',
             'course_name',
             'course_type',
@@ -964,6 +968,11 @@ class SpecializationSerializer(serializers.ModelSerializer):
     def get_course_name(self,instance):
         if instance.course:
             return instance.course.course_name
+        else:
+            return None
+    def get_university_name(self,instance):
+        if instance.university:
+            return instance.university.university_name
         else:
             return None
     def get_course_type(self,instance):

@@ -69,6 +69,7 @@ urlpatterns=[
     path('add-course/',views.add_course),
     path('add-general-course/',views.add_general_course),
     path('view-course/',views.view_course),
+    path('view-course-selection/',views.CourseSelection.as_view()),
     path('view-single-course/<pk>',views.view_single_course),
     path('edit-course/<pk>',views.edit_course),
     path('delete-course/<pk>',views.delete_course),

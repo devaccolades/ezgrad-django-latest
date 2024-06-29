@@ -23,6 +23,9 @@ from django.db.models import Max, Min, IntegerField
 from django.db.models.functions import Cast
 from question.models import *
 from api.v1.question.serializers import *
+from rest_framework.views import APIView
+from django.utils.decorators import method_decorator
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(['POST'])
@@ -2424,7 +2427,47 @@ def view_course(request):
         }
     return Response({'app_data':response_data})
 
+class CourseSelection(APIView):
+    permission_classes = [IsAuthenticated]
+    @method_decorator(group_required(['ezgrad_admin']))
+    def get(self, request):
+        university = request.query_params.get('university')
+        if not university:
+            return Response({
+                'app_data': {
+                    "StatusCode": 6001,
+                    "data": {
+                        "title": "Failed",
+                        "Message": "University parameter is required"
+                    }
+                }
+            }, status=400)
+        
+        try:
+            courses = Course.objects.filter(university=university).values('course_name', 'id')
+            course_list = list(courses)
+            response_data = {
+                "StatusCode": 6000,
+                "data": course_list
+            }
+        except Course.DoesNotExist:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": "Courses not found"
+                }
+            }
+        except Exception as e:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": str(e)
+                }
+            }
 
+        return Response({'app_data': response_data})
 
 @api_view(['GET'])
 @group_required(['ezgrad_admin'])

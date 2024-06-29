@@ -949,12 +949,22 @@ def filter_university(request):
             errors = {
                 errType: traceback.format_exc()
             }
+            universities_data = University.objects.filter(is_deleted=False).distinct().order_by('-student_review')
+            serialized_data=UniversitylistSerializer(universities_data,
+                                                        context={
+                                                            "course_name" : course,
+                                                            "userid":userid,
+                                                            'request':request,
+                                                        },many=True,).data
             response_data = {
-                "status": 0,
+                "StatusCode": 6000,
                 "api": request.get_full_path(),
                 "request": request.data,
                 "message": str(e),
-                "response": errors
+                "response": errors,
+                "data":{
+                        "universities":serialized_data,
+                }
             }
         
         return Response({'app_data':response_data})

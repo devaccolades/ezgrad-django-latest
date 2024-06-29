@@ -30,6 +30,7 @@ class University(BaseModel):
     nirf_training=models.CharField(max_length=200,blank=True,null=True)
     wes_approval=models.CharField(max_length=200,blank=True,null=True)
     rating=models.CharField(blank=True,null=True)
+    top_rated = models.BooleanField(default=False)
     slug=models.TextField(default="")
 
     class Meta:
