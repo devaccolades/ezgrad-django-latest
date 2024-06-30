@@ -117,6 +117,7 @@ class Course(BaseModel):
     fees_description=models.TextField(blank=True,null=True)
     syllabus=models.FileField(upload_to='Files',blank=True,null=True)
     type=models.CharField(max_length=200,default=" ",blank=True,null=True)
+    currency = models.ForeignKey('course.CurrencySymbol',null=True,blank=True,on_delete=models.CASCADE)
     slug=models.TextField(default="")
 
     class Meta:
@@ -235,6 +236,7 @@ class Specialization(BaseModel):
     full_fee=models.CharField(max_length=300,blank=True,null=True)
     converted_full_fee=models.CharField(max_length=200,blank=True,null=True)
     fees_description=models.TextField(blank=True,null=True)
+    currency = models.ForeignKey('course.CurrencySymbol',null=True,blank=True,on_delete=models.CASCADE)
     syllabus=models.FileField(upload_to='Files',blank=True,null=True)
     slug=models.TextField(default="")
 

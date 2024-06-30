@@ -1750,7 +1750,35 @@ def delete_facts(request,id):
         }
     return Response({'app_data':response_data})
 
+class UniversitySelection(APIView):
+    permission_classes = [IsAuthenticated]
+    @method_decorator(group_required(['ezgrad_admin']))
+    def get(self, request):
+        try:
+            university_instance = University.objects.filter(is_deleted=False).values('university_name', 'id')
+            University_list = list(university_instance)
+            response_data = {
+                "StatusCode": 6000,
+                "data": University_list
+            }
+        except University.DoesNotExist:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": "Univercity not found"
+                }
+            }
+        except Exception as e:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": str(e)
+                }
+            }
 
+        return Response({'app_data': response_data})
 
 @api_view(['POST'])
 @group_required(['ezgrad_admin'])
@@ -2597,6 +2625,36 @@ def delete_course(request,pk):
     return Response({'app_data':response_data})
 
 
+class SpecialisationSelection(APIView):
+    permission_classes = [IsAuthenticated]
+    @method_decorator(group_required(['ezgrad_admin']))
+    def get(self, request):
+        try:
+            specialization_instance = Specialization.objects.filter(is_deleted=False).values('specialization_name', 'id')
+            specialization_list = list(specialization_instance)
+            response_data = {
+                "StatusCode": 6000,
+                "data": specialization_list
+            }
+        except Specialization.DoesNotExist:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": "Specializations not found"
+                }
+            }
+        except Exception as e:
+            response_data = {
+                "StatusCode": 6001,
+                "data": {
+                    "title": "Failed",
+                    "Message": str(e)
+                }
+            }
+
+        return Response({'app_data': response_data})
+
 @api_view(['POST'])
 @group_required(['ezgrad_admin'])
 def add_specialization(request):
@@ -2737,9 +2795,11 @@ def view_single_specialization(request,pk):
         }
     return Response({'app_data':response_data})
 
-@api_view(['PUT'])
+@api_view(['PUT', 'PATCH'])
 @group_required(['ezgrad_admin'])
 def edit_specialization(request,pk):
+        university=request.data.get('university')
+        course=request.data.get('course')
         specialization_name=request.data.get('specialization_name')
         duration=request.data.get('duration')
         duration_description=request.data.get('duration_description')
@@ -2756,6 +2816,10 @@ def edit_specialization(request,pk):
         slug=request.data.get('slug')
         if (course_specialization:=Specialization.objects.filter(pk=pk,is_deleted=False)).exists():
             c=course_specialization.latest('id')
+            if university:
+                c.university=University.objects.filter(id=university).first()
+            if course:
+                c.course=Course.objects.filter(id=course).first()
             if specialization_name:
                 c.specialization_name=specialization_name
             if duration:

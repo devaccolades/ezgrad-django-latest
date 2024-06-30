@@ -48,6 +48,8 @@ urlpatterns=[
 
     path('add-university-image/',views.add_university_image),
     path('view-university-image/',views.view_university_image),
+    path('university-selection/',views.UniversitySelection.as_view()),
+    
     path('view-single-university-image/<int:id>',views.view_single_university_image),
     path('edit-university-image/<int:id>',views.edit_university_image),
     path('delete-university-image/<int:id>',views.delete_university_image),
@@ -97,6 +99,7 @@ urlpatterns=[
 
     path('add-specialization/',views.add_specialization),
     path('view-specialization/',views.view_specialization),
+    path('view-specialization-selection/',views.SpecialisationSelection.as_view()),
     path('view-single-specialization/<pk>',views.view_single_specialization),
     path('edit-specialization/<pk>',views.edit_specialization),
     path('delete-specialization/<pk>',views.delete_specialization),
