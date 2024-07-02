@@ -606,7 +606,6 @@ def student_login(request):
         country_code=request.data['country_code']
         if StudentProfile.objects.filter(country_code=country_code,mobile=mobile,is_deleted=False).exists():
              student_profile=StudentProfile.objects.get(country_code=country_code,mobile=mobile,is_deleted=False) 
-             print(student_profile,'daxo')
              headers = {
                     "Content-Type": "application/json"
                 }
@@ -636,6 +635,7 @@ def student_login(request):
                             "access_token" : response["access"],
                             "refresh_token" : response["refresh"],
                             "userid":student_profile.id,
+                            "course":student_profile.course,
                             "last_url":last_url
                         }
                     }
@@ -863,41 +863,44 @@ def filter_university(request):
             course=request.query_params.get('course')
             country=request.query_params.get('country')
             specialization=request.query_params.get('specialization')
-            # if (reg:=StudentProfile.objects.filter(id=userid,is_deleted=False)).exists():
-            #     user=reg.latest('id')
-            #     universities_data=[]
-            #     option=RecordAnswer.objects.filter(userid=user)
-            #     if specialization:
-            #             for option_id in option:
-            #             # co=Specialization.objects.filter(id=specialization,course__course_name=course)
-            #             # c=co.latest('id')
-            #             # if c:
-            #                 universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,specialization__course__course_name=course,country__in=country,specialization__specialization_name=specialization).order_by('-student_review')
+            if (reg:=StudentProfile.objects.filter(id=userid,is_deleted=False)).exists():
+                user=reg.latest('id')
+                if not user.course or user.course != course:
+                    user.course = course
+                    user.save()
+                universities_data=[]
+                option=RecordAnswer.objects.filter(userid=user)
+                if specialization:
+                        for option_id in option:
+                        # co=Specialization.objects.filter(id=specialization,course__course_name=course)
+                        # c=co.latest('id')
+                        # if c:
+                            universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,specialization__course__course_name=course,country__in=country,specialization__specialization_name=specialization).order_by('-student_review')
                             
                         
-            #                 serialized_data=UniversitylistSpecializationSerializer(universities,
-            #                                             context={
-            #                                                 "course_name" : course,
-            #                                                 "specialization":specialization,
-            #                                                 "userid":userid,
-            #                                                 'request':request,
-            #                                             },many=True,).data
-            #                 universities_data.extend(serialized_data)
+                            serialized_data=UniversitylistSpecializationSerializer(universities,
+                                                        context={
+                                                            "course_name" : course,
+                                                            "specialization":specialization,
+                                                            "userid":userid,
+                                                            'request':request,
+                                                        },many=True,).data
+                            universities_data.extend(serialized_data)
                             
-            #                 unique_universities_list = []
+                            unique_universities_list = []
 
 
-            #                 for university in universities_data:
-            #                         if university not in unique_universities_list:
-            #                             unique_universities_list.append(university)
+                            for university in universities_data:
+                                    if university not in unique_universities_list:
+                                        unique_universities_list.append(university)
                      
-            #             response_data={
-            #                 "StatusCode":6000,
-            #                 "data":{
-            #                     "universities":unique_universities_list,
-            #                 }
-            #             }
-            #     else:
+                        response_data={
+                            "StatusCode":6000,
+                            "data":{
+                                "universities":unique_universities_list,
+                            }
+                        }
+                else:
                     # for option_id in option:
                             
                     #         universities = University.objects.filter(options=option_id.option,service__coursetype=coursetype,course__course_name=course,country__in=country)
@@ -919,42 +922,44 @@ def filter_university(request):
                     #         for university in universities_data:
                     #                 if university not in unique_universities_list:
                     #                     unique_universities_list.append(university)
-            #         course_type_instance = service_model.CourseType.objects.filter(id=coursetype).first()
-            #         universities_data = University.objects.filter(service__service=course_type_instance.service).distinct().order_by('-student_review')
-            #         serialized_data=UniversitylistSerializer(universities_data,
-            #                                             context={
-            #                                                 "course_name" : course,
-            #                                                 "userid":userid,
-            #                                                 'request':request,
-            #                                             },many=True,).data
-                    
-            #         response_data={
-            #                 "StatusCode":6000,
-            #                 "data":{
-            #                     "universities":serialized_data,
-            #                 }
-            #             }
-            # else:
-            #     response_data={
-            #         "StatusCode":6001,
-            #         "data":{
-            #             "title":"Failed",
-            #             "Message":"User Not Found"  
-            #         }
-            #     }
-            universities_data = University.objects.filter(is_deleted=False).distinct().order_by('-student_review')
-            serialized_data=UniversitylistSerializer(universities_data,
+                    # course_type_instance = service_model.CourseType.objects.filter(id=coursetype).first()
+                    course_instances = Course.objects.filter(course_name__icontains=course,is_deleted=False)
+                    university_ids = course_instances.values_list('university', flat=True).distinct()
+                    universities_data = University.objects.filter(id__in=university_ids,is_deleted=False).distinct().order_by('-student_review')
+                    serialized_data=UniversitylistSerializer(universities_data,
                                                         context={
                                                             "course_name" : course,
                                                             "userid":userid,
                                                             'request':request,
                                                         },many=True,).data
-            response_data={
+                    
+                    response_data={
                             "StatusCode":6000,
                             "data":{
                                 "universities":serialized_data,
                             }
                         }
+            else:
+                response_data={
+                    "StatusCode":6001,
+                    "data":{
+                        "title":"Failed",
+                        "Message":"User Not Found"  
+                    }
+                }
+            # universities_data = University.objects.filter(is_deleted=False).distinct().order_by('-student_review')
+            # serialized_data=UniversitylistSerializer(universities_data,
+            #                                             context={
+            #                                                 "course_name" : course,
+            #                                                 "userid":userid,
+            #                                                 'request':request,
+            #                                             },many=True,).data
+            # response_data={
+            #                 "StatusCode":6000,
+            #                 "data":{
+            #                     "universities":serialized_data,
+            #                 }
+            #             }
             
         except Exception as e:
             transaction.rollback()

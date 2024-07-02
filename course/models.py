@@ -204,6 +204,9 @@ class CurrencySymbol(models.Model):
     
     class Meta:
         db_table='CurrencySymbol'
+
+    def __str__(self) -> str:
+        return self.symbol if self.symbol else self.id
 def set_order_id(sender, instance, **kwargs):
         if not instance.order_id:
             

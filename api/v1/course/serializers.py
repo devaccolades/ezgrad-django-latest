@@ -270,6 +270,7 @@ class UniversitySerializer(serializers.ModelSerializer):
     country=serializers.SerializerMethodField()
     state=serializers.SerializerMethodField()
     options=serializers.SerializerMethodField()
+    course = serializers.SerializerMethodField()
     class Meta:
         model=University
         fields=(
@@ -300,10 +301,25 @@ class UniversitySerializer(serializers.ModelSerializer):
             'country_ranking',
             'nirf_training',
             'wes_approval',
+            'course',
             'rating',
             'slug',
         )
    
+    def get_course(self,instance):
+        if instance:
+            request = self.context.get('request')
+            course_name = request.query_params.get('course')
+            specialization_name = request.query_params.get('specialization_name')
+            
+            if specialization_name:
+                return Specialization.objects.filter(specialization_name=specialization_name).values('specialization_name','year_fee','full_fee','currency__symbol')
+            elif course_name:
+                return Course.objects.filter(course_name=course_name).values('course_name','year_fee','full_fee','currency__symbol')
+            else:
+                return None
+        else:
+            return None
     def get_service_name(self,instance):
         if instance:
             return instance.service.service
@@ -645,6 +661,7 @@ class CourseSerializer(serializers.ModelSerializer):
     course_type=serializers.SerializerMethodField()
     specialization=serializers.SerializerMethodField()
     service=serializers.SerializerMethodField()
+    currency__symbol = serializers.SerializerMethodField()
     class Meta:
         model=Course
         fields=(
@@ -674,8 +691,13 @@ class CourseSerializer(serializers.ModelSerializer):
             'university',
             'slug',
             'specialization',
-            
+            'currency__symbol'
         )
+    def get_currency__symbol(self,instance):
+        if instance.currency:
+            return instance.currency.symbol if instance.currency.symbol else None
+        else:
+            return None
     def get_course_type(self,instance):
         if instance:
             return instance.course_type.course_type

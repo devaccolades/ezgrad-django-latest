@@ -27,12 +27,11 @@ class StudentProfile(BaseModel):
     gender=models.CharField(max_length=100,blank=True,null=True)
     dob=models.DateField(blank=True,null=True)
     status=models.CharField(max_length=200,choices=REGISTER_STATUS_CHOICES,default="pending")
-
-    
     username = models.CharField(max_length=128, blank=True, null=True)
     user = models.OneToOneField("auth.User",on_delete=models.CASCADE, blank=True, null=True)
     password = models.TextField(blank=True, null=True)
     register_date=models.DateTimeField(auto_now_add=True)
+    course = models.CharField(max_length=300,blank=True,null=True)
     is_deleted=models.BooleanField(default=False)
     class Meta:
 

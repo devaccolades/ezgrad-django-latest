@@ -162,6 +162,8 @@ def view_university(request):
 # @group_required(['ezgrad_admin'])
 @permission_classes([AllowAny])
 def view_single_university(request,pk):
+    course_name = request.query_params.get('course')
+    specialization_name = request.query_params.get('specialization_name')
     if (university:=University.objects.filter(pk=pk,is_deleted=False)).exists():
         serialized_data=UniversitySerializer(university,
                                              context={
