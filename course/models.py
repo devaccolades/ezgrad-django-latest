@@ -30,7 +30,8 @@ class University(BaseModel):
     nirf_training=models.CharField(max_length=200,blank=True,null=True)
     wes_approval=models.CharField(max_length=200,blank=True,null=True)
     rating=models.CharField(blank=True,null=True)
-    top_rated = models.BooleanField(default=False)
+    highlight_text = models.CharField(max_length=255,null=True,blank=True)
+    highlight_color = models.CharField(max_length=100,null=True,blank=True)
     slug=models.TextField(default="")
 
     class Meta:

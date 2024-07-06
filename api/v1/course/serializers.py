@@ -53,7 +53,8 @@ class UniversitylistSerializer(serializers.ModelSerializer):
             'facility', 
             'rating',
             'wishlist',
-            'top_rated',
+            'highlight_text',
+            'highlight_color',
             'slug',
         )
     def get_course(self,instance):
@@ -155,7 +156,8 @@ class UniversitylistSpecializationSerializer(serializers.ModelSerializer):
             'facility', 
             'rating',
             'wishlist',
-            'top_rated',
+            'highlight_text',
+            'highlight_color',
             'slug',
         )
 
@@ -303,7 +305,9 @@ class UniversitySerializer(serializers.ModelSerializer):
             'wes_approval',
             'course',
             'rating',
-            'slug',
+            'highlight_text',
+            'highlight_color',
+            'slug'
         )
    
     def get_course(self,instance):
@@ -691,11 +695,17 @@ class CourseSerializer(serializers.ModelSerializer):
             'university',
             'slug',
             'specialization',
-            'currency__symbol'
+            'currency__symbol',
+            'currency',
         )
     def get_currency__symbol(self,instance):
         if instance.currency:
             return instance.currency.symbol if instance.currency.symbol else None
+        else:
+            return None
+    def get_currency(self,instance):
+        if instance.currency:
+            return instance.currency.id if instance.currency.id else None
         else:
             return None
     def get_course_type(self,instance):
@@ -983,6 +993,7 @@ class SpecializationSerializer(serializers.ModelSerializer):
             'converted_full_fee',
             'fees_description',
             'syllabus',
+            'currency',
             'count',
           
             
@@ -1017,6 +1028,11 @@ class SpecializationSerializer(serializers.ModelSerializer):
         if instance:
             points=list(instance.admissionprocedures_set.filter(specialization=instance,is_deleted=False).values('id','points'))
             return points
+        else:
+            return None
+    def get_currency(self,instance):
+        if instance.currency:
+            return instance.currency.id
         else:
             return None
     

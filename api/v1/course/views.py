@@ -56,6 +56,8 @@ def add_university(request):
         pros=request.data.get('pros')
         nirf_training=request.data.get('nirf_training')
         wes_approval=request.data.get('wes_approval')
+        highlight_text=request.data.get('highlight_text')
+        highlight_color=request.data.get('highlight_color')
         slug=request.data['slug']
         renamed_slug=slug.replace(' ','-')
         if (s:=ServiceType.objects.filter(id=service)).exists():
@@ -88,7 +90,9 @@ def add_university(request):
                                                 pros=pros,
                                                 nirf_training=nirf_training,
                                                 wes_approval=wes_approval,
-                                                slug=renamed_slug
+                                                slug=renamed_slug,
+                                                highlight_text = highlight_text,
+                                                highlight_color = highlight_color,
                                                 )
                 country_obj=country
                 for i in country_obj:
@@ -212,6 +216,8 @@ def edit_university(request,pk):
     nirf_training=request.data.get('nirf_training')
     wes_approval=request.data.get('wes_approval')
     rating=request.data.get('rating')
+    highlight_text=request.data.get('highlight_text')
+    highlight_color=request.data.get('highlight_color')
     slug=request.data.get('slug')
 
     if (u:=University.objects.filter(pk=pk,is_deleted=False)).exists():
@@ -254,6 +260,10 @@ def edit_university(request,pk):
             university.wes_approval=wes_approval
         if rating:
             university.rating=rating
+        if highlight_text and highlight_text !=university.highlight_text:
+            university.highlight_text=highlight_text
+        if highlight_color and highlight_color !=university.highlight_color:
+            university.highlight_color=highlight_color
         if slug:
             renamed_slug=slug.replace(' ','-')
             if (p:=University.objects.filter(is_deleted=False,slug=renamed_slug)).exclude(id=university.id).exists():
@@ -580,8 +590,11 @@ def add_admission_procedure(request):
         if course:
             if (course_data:=Course.objects.filter(id=course,is_deleted=False)).exists():
                 c=course_data.latest('id')
-                course_admission_procedure=AdmissionProcedures.objects.create(course=c,
-                                                                        points=points)
+                if (specialization_data:=Specialization.objects.filter(id=specialization,is_deleted=False)).exists():
+                    s=specialization_data.latest('id')
+                else:
+                    s = None
+                course_admission_procedure=AdmissionProcedures.objects.create(course=c,points=points,specialization=s)
                 response_data={
                     "StatusCode":6000,
                     "data":{
@@ -2337,6 +2350,7 @@ def add_course(request):
         admission_procedure=request.data.get('admission_procedure')
         semester_fee=request.data.get('semester_fee')
         year_fee=request.data.get('year_fee')
+        currency=request.data.get('currency')
         fees_description=request.data.get('fees_description')
         syllabus=request.data['syllabus']
         slug=request.data['slug']
@@ -2362,6 +2376,8 @@ def add_course(request):
                             }
                         }
                     else:
+                        if currency:
+                            currency_instance = CurrencySymbol.objects.filter(id=currency).first()
                         course=Course.objects.create(university=u,
                                                     course_type=course_types,
                                                     course_name=course_name,
@@ -2378,6 +2394,7 @@ def add_course(request):
                                                     semester_fee=semester_fee,
                                                     year_fee=year_fee,
                                                     full_fee=full_fee,
+                                                    currency = currency_instance if currency else None,
                                                     fees_description=fees_description,
                                                     syllabus=syllabus,
                                                     slug=renamed_slug,
@@ -2537,6 +2554,7 @@ def edit_course(request,pk):
     eligibility_description=request.data.get('eligibility_description')
     admission_procedure=request.data.get('admission_procedure')
     fees=request.data.get('semester_fee')
+    currency=request.data.get('currency')
     fees_description=request.data.get('fees_description')
     syllabus=request.data.get('syllabus')
     slug=request.data.get('slug')
@@ -2568,6 +2586,8 @@ def edit_course(request,pk):
             course.semester_fee=fees
         if fees_description:
             course.fees_description=fees_description
+        if currency and course.currency !=currency:
+            course.currency = CurrencySymbol.objects.filter(id=currency).first()
         if syllabus:
             course.syllabus=syllabus
         if slug:
@@ -2676,6 +2696,7 @@ def add_specialization(request):
         admission_procedure=request.data.get('admission_procedure')
         semester_fee=request.data.get('semester_fee')
         year_fee=request.data.get('year_fee')
+        currency=request.data.get('currency')
         fees_description=request.data.get('fees_description')
         syllabus=request.data.get('syllabus')
         slug=request.data['slug']
@@ -2698,6 +2719,10 @@ def add_specialization(request):
                             }
                         }
                     else:
+                        if currency:
+                            currency_instance = CurrencySymbol.objects.filter(id=currency).first()
+                        else:
+                            currency_instance = None
                         specialization=Specialization.objects.create(university=u,
                                                     course=course,
                                                     specialization_name=specialization_name,
@@ -2713,6 +2738,7 @@ def add_specialization(request):
                                                     semester_fee=semester_fee,
                                                     year_fee=year_fee,
                                                     full_fee=full_fee,
+                                                    currency = currency_instance,
                                                     fees_description=fees_description,
                                                     syllabus=syllabus,
                                                     slug=renamed_slug)
@@ -2813,6 +2839,7 @@ def edit_specialization(request,pk):
         eligibility_description=request.data.get('eligibility_description')
         admission_procedure=request.data.get('admission_procedure')
         fees=request.data.get('semester_fee')
+        currency=request.data.get('currency')
         fees_description=request.data.get('fees_description')
         syllabus=request.data.get('syllabus')
         slug=request.data.get('slug')
@@ -2844,6 +2871,8 @@ def edit_specialization(request,pk):
                 c.admission_procedure=admission_procedure
             if fees:
                 c.semester_fee=fees
+            if currency and currency !=c.currency:
+                c.currency = CurrencySymbol.objects.filter(id=currency).first()
             if fees_description:
                 c.fees_description=fees_description
             if syllabus:
